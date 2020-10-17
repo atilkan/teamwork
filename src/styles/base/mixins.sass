@@ -1,0 +1,9 @@
+@mixin font($fs:14px, $fw:400, $cl:$black, $lh:1.5em)
+	font-size: $fs
+	font-weight: $fw
+	color: $cl
+	line-height: $lh
+	font-family: $font
+
+@mixin anim($time:0.2s, $prop:all, $ease:ease-out)
+	transition: $prop $time $ease

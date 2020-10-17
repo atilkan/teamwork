@@ -4,21 +4,20 @@ import VueRouter, { RouteConfig } from "vue-router"
 Vue.use(VueRouter)
 
 function loadView(page: string) {
+  // This makes views lazy loaded
+  // Also no need to import every view manually
   return () => import(`@/views/${page}.vue`)
 }
 
 const routes: Array<RouteConfig> = [
   {
     path: "/",
-    redirect: { name: "planets" },
+    redirect: { name: "users" },
   },
   {
-    path: "/planets",
-    name: "planets",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: loadView("planets"),
+    path: "/users",
+    name: "users",
+    component: loadView("users"),
   },
 ]
 

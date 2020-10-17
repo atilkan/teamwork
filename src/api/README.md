@@ -5,13 +5,13 @@ This module is for intended to make API consumption easier from anywhere. It use
 ### **import**
 
 ```js
-import api from "@/api/";
+import api from "@/api/"
 ```
 
 **OR** We could assign it to global vue namespace and get rid of importing
 
 ```js
-Vue.prototype.$api = api;
+Vue.prototype.$api = api
 ```
 
 ### **Usage examples**
@@ -37,13 +37,13 @@ Add a file that named as your service(products) inside **@/api/services/** folde
 
 ```js
 // @/api/services/products.ts
-import HTTP from "@/utils/http";
+import HTTP from "@/utils/http"
 
 export default {
   getList() {
-    return HTTP.get("products/getList/");
+    return HTTP.get("products/getList/")
   },
-};
+}
 ```
 
-**NOTE:** **HTTP** is a instance of axios and basic configurations are set inside **@/utils/http.ts** file.
+**NOTE:** **HTTP** is a instance of axios and basic configurations are set inside **@/utils/http.ts** file. This is also usefull when we want to set token to our basic configuration.

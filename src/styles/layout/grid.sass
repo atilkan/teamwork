@@ -1,0 +1,74 @@
+@import "../base/vars.sass"
+
+.row
+	display: grid
+	grid-template-columns: repeat($grid, 1fr)
+	grid-column-gap: ( $gap / 2)
+	grid-row-gap: ( $gap / 2 )
+	width: 100%
+	max-width: $desktop
+	margin-left: auto
+	margin-right: auto
+	&.no-col-gap
+		grid-column-gap: 0 !important
+	&.no-row-gap
+		grid-row-gap: 0 !important
+	&.no-gap
+		grid-gap: 0 !important
+	&.full
+		max-width: 100% !important
+
+// Mobile
+@for $i from 1 through $grid
+	.sm-#{$i}
+		grid-column: auto / span $i
+
+// Mobile Order
+@for $i from 1 through $grid
+	.sm-order-#{$i}
+		order: $i
+
+// Mobile Offset
+@for $i from 1 through $grid
+	.sm-offset-#{$i}
+		grid-column-start: $i + 1
+
+// Tablet
+@media screen and (min-width: $tablet)
+	.row
+		grid-column-gap: 24px
+
+	// Grid
+	@for $i from 1 through $grid
+		.md-#{$i}
+			grid-column: auto / span $i
+
+	// Orders
+	@for $i from 1 through $grid
+		.md-order-#{$i}
+			order: $i
+
+	// Offset
+	@for $i from 1 through $grid
+		.md-offset-#{$i}
+			grid-column-start: $i + 1
+
+// Desktop
+@media screen and (min-width: $desktop)
+	.row
+		grid-column-gap: $gap
+
+	// Grid
+	@for $i from 1 through $grid
+		.lg-#{$i}
+			grid-column: auto / span $i
+
+	// Order
+	@for $i from 1 through $grid
+		.lg-order-#{$i}
+			order: $i
+
+	// Offset
+	@for $i from 0 through $grid
+		.lg-offset-#{$i}
+			grid-column-start: $i + 1

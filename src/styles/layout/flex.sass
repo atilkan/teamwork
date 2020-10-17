@@ -1,0 +1,96 @@
+@import "../base/vars.sass"
+
+.flex
+	display: flex !important
+	&.f-col
+		flex-direction: column
+	&.f-row
+		flex-direction: row
+	&.inline
+		display: inline-flex
+	&.between
+		justify-content: space-between
+	&.around
+		justify-content: space-around
+	&.left
+		justify-content: flex-start
+	&.right
+		justify-content: flex-end
+	&.center
+		justify-content: center
+	&.top
+		align-items: flex-start
+	&.middle
+		align-items: center
+	&.bottom
+		align-items: flex-end
+	&.baseline
+		align-items: baseline
+	&.wrap
+		flex-wrap: wrap
+	.self-top
+		align-self: flex-start
+	.self-bottom
+		align-self: flex-end
+	.self-middle
+		align-self: center
+	.shrink
+		flex-grow: 0
+		flex-shrink: 0
+		flex-basis: auto
+	.expand
+		width: auto
+		flex-grow: 1
+		flex-shrink: 1
+		flex-basis: 0px
+
+@media screen and (max-width: $tablet)
+	.flex
+		&.mb-block
+			display: block !important
+		&.mb-grid
+			display: grid
+		&.mb-wrap
+			flex-wrap: wrap
+		&.mb-nowrap
+			flex-wrap: nowrap
+		&.mb-inline
+			display: inline-flex
+
+@media screen and (min-width: $tablet) and (max-width: $desktop)
+	.flex
+		&.tb-left
+			justify-content: flex-start
+		&.tb-right
+			justify-content: flex-end
+		&.tb-center
+			justify-content: center
+		&.tb-top
+			align-items: flex-start
+		&.tb-middle
+			align-items: flex-end
+		&.tb-bottom
+			align-items: center
+		&.tb-block
+			display: block !important
+		&.tb-inline
+			display: inline-flex
+
+@media screen and (min-width: $desktop)
+	.flex
+		&.ds-left
+			justify-content: flex-start
+		&.ds-right
+			justify-content: flex-end
+		&.ds-center
+			justify-content: center
+		&.ds-top
+			align-items: flex-start
+		&.ds-middle
+			align-items: flex-end
+		&.ds-bottom
+			align-items: center
+		&.ds-block
+			display: block !important
+		&.ds-inline
+			display: inline-flex
