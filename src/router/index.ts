@@ -19,6 +19,11 @@ const routes: Array<RouteConfig> = [
     name: "users",
     component: loadView("users"),
   },
+  {
+    path: "*",
+    name: "four-o-four",
+    component: loadView("four-o-four"),
+  },
 ]
 
 const router = new VueRouter({

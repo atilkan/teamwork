@@ -1,7 +1,7 @@
 import HTTP from "@/utils/http"
 
 export default {
-  getAll() {
+  getUsers() {
     return HTTP.get("people/")
   },
 }

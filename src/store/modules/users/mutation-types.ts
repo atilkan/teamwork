@@ -1,0 +1,5 @@
+export default {
+  FETCH_USERS: "FETCH_USERS",
+  SET_USERS: "SET_USERS",
+  GET_USER_BY: "GET_USER_BY",
+}
