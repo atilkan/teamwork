@@ -1,9 +1,16 @@
 import { UserDTO } from "./user"
 import { PlanetDTO } from "./planet"
 
-export interface ResponseDTO {
+export interface UserResponseDTO {
   count: number
   next: string | null
   previous: string | null
-  results: PlanetDTO[] | UserDTO[]
+  results: UserDTO[]
+}
+
+export interface PlanetResponseDTO {
+  count: number
+  next: string | null
+  previous: string | null
+  results: PlanetDTO[]
 }

@@ -1,2 +1,33 @@
-.table.alpha
-  //
+@import "@/styles/base/colors.sass"
+
+.table-alpha
+  width: auto
+  max-width: 100%
+  overflow-x: auto
+  table
+    min-width: 100%
+    width: auto
+    thead
+      th
+        .cell
+          padding: 10px
+    tbody
+      tr
+        &:nth-child(even)
+          background-color: rgba($blue, 0.1)
+      td
+        .cell
+          padding: 10px
+  .header-cell-button
+    outline: none
+    border: none
+    background-color: transparent
+    font-weight: bold
+    display: inline-flex
+    justify-content: center
+    align-items: center
+    color: black
+    cursor: pointer
+    &:disabled
+      color: black
+      cursor: default

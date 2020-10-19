@@ -1,15 +1,13 @@
 <template>
-  <div></div>
+  <div>
+    pagination-alpha
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue"
 
 export default Vue.extend({
-  name: "button-alpha",
+  name: "pagination-alpha",
 })
 </script>
-
-<style lang="sass" scoped>
-@import "./button-alpha.sass"
-</style>
