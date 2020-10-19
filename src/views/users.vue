@@ -5,13 +5,17 @@
     </div>
     <div>
       <table-alpha :headers="headers" :items="USERS" :loading="isLoading">
-        <!-- <template v-slot="items" slot-scope="props">
-          <td>
-            {{ props.item }}
-          </td>
-        </template> -->
-        <template v-slot:item_url="{ row }">
-          {{ row.url }}
+        <template v-slot:item_created="{ row }">
+          {{ formatDate(row.created) }}
+        </template>
+        <template v-slot:item_edited="{ row }">
+          {{ formatDate(row.edited) }}
+          {{ formatDistance(row.created, row.edited) }}
+        </template>
+        <template v-slot:item_homeworld="{ row }">
+          <button @click="onUrlClick(row.homeworld)">
+            Plane Name
+          </button>
         </template>
       </table-alpha>
     </div>
@@ -24,6 +28,7 @@
 import Vue from "vue"
 import MT from "@/store/modules/users/mutation-types"
 import { mapActions, mapState } from "vuex"
+import { format, formatDistance } from "date-fns"
 
 export default Vue.extend({
   name: "users",
@@ -47,7 +52,7 @@ export default Vue.extend({
       { name: "Mass", key: "mass", sortable: true },
       { name: "Created", key: "created", sortable: true },
       { name: "Edited", key: "edited", sortable: true },
-      { name: "Planet", key: "url", sortable: false },
+      { name: "Planet", key: "homeworld", sortable: false },
     ]
   },
   mounted() {
@@ -66,6 +71,16 @@ export default Vue.extend({
         .finally(() => {
           this.isLoading = false
         })
+    },
+    formatDate(date: Date) {
+      return format(new Date(date), "dd-MM-yyyy HH:mm")
+    },
+    formatDistance(start: Date, end: Date) {
+      return formatDistance(new Date(start), new Date(end)) + " later"
+    },
+    onUrlClick(url: string) {
+      // do modal staff
+      console.log(url)
     },
   },
 })

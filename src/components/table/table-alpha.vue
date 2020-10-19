@@ -84,20 +84,11 @@ export default Vue.extend({
   mounted() {
     this.sortByLocal = this.sortBy
     this.sortDirLocal = this.sortDir as SortDirection
-    setInterval(() => {
-      console.log("slots:", this.$slots)
-    }, 1000)
   },
   methods: {
     onSort(key: string) {
-      // this.$emit("sort", { key, order })
       if (this.sortByLocal === key) {
         this.sortDirLocal = this.sortDirLocal === SortDirection.asc ? SortDirection.desc : SortDirection.asc
-        // if (this.sortDirLocal === SortDirection.asc) {
-        //   this.sortDirLocal = SortDirection.desc
-        // } else if (this.sortDirLocal === SortDirection.desc) {
-        //   this.sortDirLocal = SortDirection.asc
-        // }
       } else {
         this.sortByLocal = key
         this.sortDirLocal = SortDirection.asc
