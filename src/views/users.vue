@@ -4,14 +4,13 @@
       <input-alpha></input-alpha>
     </div>
     <div>
-      <table-alpha :headers="headers" :items="USERS" :loading="isLoading">
+      <table-alpha :headers="headers" :items="USERS" :loading="isLoading" sort-by="name" sort-dir="asc">
         <!-- <template slot="items" slot-scope="props">
           <td>
             {{ props.item }}
           </td>
         </template> -->
       </table-alpha>
-      <pagination-alpha>pagination</pagination-alpha>
     </div>
 
     <!-- <div>Last a modal</div> -->
@@ -28,7 +27,6 @@ export default Vue.extend({
   components: {
     "table-alpha": () => import("@comp/table/table-alpha.vue"),
     "input-alpha": () => import("@comp/input/input-alpha.vue"),
-    "pagination-alpha": () => import("@comp/pagination/pagination-alpha.vue"),
   },
   data: () => ({ isLoading: false }),
   computed: {
