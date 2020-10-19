@@ -19,6 +19,4 @@ export default Vue.extend({
 })
 </script>
 
-<style lang="sass" scoped>
-@import "./input-alpha.sass"
-</style>
+<style lang="sass" scoped src="./input-alpha.sass"></style>

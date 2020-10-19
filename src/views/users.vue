@@ -4,12 +4,15 @@
       <input-alpha></input-alpha>
     </div>
     <div>
-      <table-alpha :headers="headers" :items="USERS" :loading="isLoading" sort-by="name" sort-dir="asc">
-        <!-- <template slot="items" slot-scope="props">
+      <table-alpha :headers="headers" :items="USERS" :loading="isLoading">
+        <!-- <template v-slot="items" slot-scope="props">
           <td>
             {{ props.item }}
           </td>
         </template> -->
+        <template v-slot:item_url="{ row }">
+          {{ row.url }}
+        </template>
       </table-alpha>
     </div>
 

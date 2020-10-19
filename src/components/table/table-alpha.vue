@@ -8,8 +8,7 @@
               <button class="header-cell-button" @click="onSort(field.key)" :disabled="!field.sortable">
                 {{ field.name }}
                 <template v-if="field.sortable && sortByLocal === field.key">
-                  <unicon name="arrow-up" v-if="sortDirLocal === 'asc'" />
-                  <unicon name="arrow-down" v-if="sortDirLocal === 'desc'" />
+                  <unicon width="16" height="16" :name="sortDirLocal === 'asc' ? 'arrow-up' : 'arrow-down'" />
                 </template>
               </button>
             </div>
@@ -20,7 +19,12 @@
         <tr v-for="(row, i) in itemsComp" :key="i">
           <td v-for="(col, j) in headersComp" :key="j">
             <div class="cell">
-              {{ row[headersComp[j].key] }}
+              <!-- <template v-if="$slots"> </template> -->
+              <slot :name="`item_${headersComp[j].key}`" :row="row">
+                <template>
+                  {{ row[headersComp[j].key] }}
+                </template>
+              </slot>
             </div>
           </td>
         </tr>
@@ -80,16 +84,20 @@ export default Vue.extend({
   mounted() {
     this.sortByLocal = this.sortBy
     this.sortDirLocal = this.sortDir as SortDirection
+    setInterval(() => {
+      console.log("slots:", this.$slots)
+    }, 1000)
   },
   methods: {
     onSort(key: string) {
       // this.$emit("sort", { key, order })
       if (this.sortByLocal === key) {
-        if (this.sortDirLocal === SortDirection.asc) {
-          this.sortDirLocal = SortDirection.desc
-        } else if (this.sortDirLocal === SortDirection.desc) {
-          this.sortDirLocal = SortDirection.asc
-        }
+        this.sortDirLocal = this.sortDirLocal === SortDirection.asc ? SortDirection.desc : SortDirection.asc
+        // if (this.sortDirLocal === SortDirection.asc) {
+        //   this.sortDirLocal = SortDirection.desc
+        // } else if (this.sortDirLocal === SortDirection.desc) {
+        //   this.sortDirLocal = SortDirection.asc
+        // }
       } else {
         this.sortByLocal = key
         this.sortDirLocal = SortDirection.asc
@@ -99,6 +107,4 @@ export default Vue.extend({
 })
 </script>
 
-<style lang="sass" scoped>
-@import "./table-alpha.sass"
-</style>
+<style lang="sass" scoped src="./table-alpha.sass"></style>
