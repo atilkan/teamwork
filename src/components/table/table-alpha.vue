@@ -7,7 +7,7 @@
             <div class="cell">
               <button class="header-cell-button" @click="onSort(field.key)" :disabled="!field.sortable">
                 {{ field.name }}
-                <template v-if="field.sortable && sortByLocal === field.key">
+                <template v-if="field.sortable && sortKey === field.key && sortDirLocal !== 'none'">
                   <unicon width="16" height="16" :name="sortDirLocal === 'asc' ? 'arrow-up' : 'arrow-down'" />
                 </template>
               </button>
@@ -63,8 +63,9 @@ export default Vue.extend({
     },
   },
   data: () => ({
-    sortByLocal: null as null | string,
+    sortKey: null as null | string,
     sortDirLocal: "asc" as SortDirection,
+    sortClickCount: 0,
   }),
   computed: {
     headersComp() {
@@ -75,22 +76,32 @@ export default Vue.extend({
       }))
     },
     itemsComp() {
-      if (this.sortByLocal) {
-        return orderBy(this.items, this.sortByLocal, this.sortDirLocal)
+      if (this.sortKey && this.sortDirLocal !== SortDirection.none) {
+        return orderBy(this.items, this.sortKey, this.sortDirLocal)
       }
       return this.items
     },
   },
   mounted() {
-    this.sortByLocal = this.sortBy
+    this.sortKey = this.sortBy
     this.sortDirLocal = this.sortDir as SortDirection
   },
   methods: {
     onSort(key: string) {
-      if (this.sortByLocal === key) {
-        this.sortDirLocal = this.sortDirLocal === SortDirection.asc ? SortDirection.desc : SortDirection.asc
+      if (this.sortKey === key) {
+        switch (this.sortDirLocal) {
+          case SortDirection.asc:
+            this.sortDirLocal = SortDirection.desc
+            break
+          case SortDirection.desc:
+            this.sortDirLocal = SortDirection.none
+            break
+          case SortDirection.none:
+            this.sortDirLocal = SortDirection.asc
+            break
+        }
       } else {
-        this.sortByLocal = key
+        this.sortKey = key
         this.sortDirLocal = SortDirection.asc
       }
     },

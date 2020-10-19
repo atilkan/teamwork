@@ -4,7 +4,7 @@
       <input-alpha></input-alpha>
     </div>
     <div>
-      <table-alpha :headers="headers" :items="USERS" :loading="isLoading">
+      <table-alpha :headers="headers" :items="USERS" :loading="isLoading" sort-by="name">
         <template v-slot:item_created="{ row }">
           {{ formatDate(row.created) }}
         </template>
