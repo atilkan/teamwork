@@ -1,5 +1,7 @@
 <template>
-  <div></div>
+  <button @click="$emit('click')" class="button-alpha">
+    <slot></slot>
+  </button>
 </template>
 
 <script lang="ts">
@@ -10,6 +12,4 @@ export default Vue.extend({
 })
 </script>
 
-<style lang="sass" scoped>
-@import "./button-alpha.sass"
-</style>
+<style lang="sass" scoped src="./button-alpha.sass"></style>

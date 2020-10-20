@@ -4,7 +4,7 @@ export default {
   getAll() {
     return HTTP.get("planets/")
   },
-  getByID(id: string) {
-    return HTTP.get(`planets/${id}`)
+  get(url: string) {
+    return HTTP.get(url)
   },
 }

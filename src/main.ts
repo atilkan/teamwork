@@ -5,6 +5,7 @@ import router from "./router"
 import store from "./store"
 import "@/styles/main.sass"
 import "@/plugins/unicons"
+import "@/utils/global-components"
 
 Vue.config.productionTip = false
 

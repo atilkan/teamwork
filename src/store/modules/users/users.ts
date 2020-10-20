@@ -16,13 +16,25 @@ const users: Module<State, State> = {
   state,
   actions: {
     async [MT.FETCH_USERS]({ commit }) {
-      const response: UserResponseDTO = await api.user.getUsers()
-      // TODO: map only required properties if you need memory
-      commit(MT.SET_USERS, response.results)
-      commit(MT.SET_COUNT, response.count)
-      commit(MT.SET_PREVIOUS, response.previous)
-      commit(MT.SET_NEXT, response.next)
-      return response
+      try {
+        const response: UserResponseDTO = await api.user.getUsers()
+        // map only required properties // good for memory and reactive watcher
+        response.results.map((item: UserDTO) => ({
+          name: item.name,
+          height: item.height,
+          mass: item.mass,
+          created: item.created,
+          edited: item.edited,
+          homeworld: item.homeworld,
+        }))
+        commit(MT.SET_USERS, response.results)
+        commit(MT.SET_COUNT, response.count)
+        commit(MT.SET_PREVIOUS, response.previous)
+        commit(MT.SET_NEXT, response.next)
+        return response
+      } catch (error) {
+        throw "Can't load user information"
+      }
     },
   },
   mutations: {

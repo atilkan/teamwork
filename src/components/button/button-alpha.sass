@@ -1,2 +1,14 @@
+@import "@/styles/base/colors.sass"
+@import "@/styles/base/mixins.sass"
+
 .button-alpha
-  //
+  background-color: $blue
+  outline: none
+  border-radius: 4px
+  border: none
+  color: #fff
+  padding: 5px 10px
+  cursor: pointer
+  @include anim()
+  &:hover
+    background-color: rgba($blue, 0.7)
