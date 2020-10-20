@@ -9,6 +9,7 @@
           @input="onSearch"
           @enter="onEnter"
           :suggestions="suggestions"
+          :loading="isSuggestionsLoading"
           id="suggestions"
         />
       </div>
@@ -32,7 +33,7 @@
       </div>
     </div>
 
-    <modal-alpha v-model="isModalVisible" :loading.sync="isPlanetLoading" @close="onModalClose">
+    <modal-alpha v-model="isModalVisible" :loading="isPlanetLoading" @close="onModalClose">
       <div v-if="planetInfo" class="text-left">
         <h3 class="bold mb-4">Planet Information</h3>
         <p><span class="bold">Name:</span> {{ planetInfo.name }}</p>
@@ -73,6 +74,7 @@ export default Vue.extend({
     planetInfo: null as PlanetDTO | null,
     isPlanetLoading: false,
     searchQuery: "",
+    isSuggestionsLoading: false,
     suggestions: null as string[] | null,
   }),
   computed: {
@@ -100,7 +102,7 @@ export default Vue.extend({
       SEARCH_USERS: MT.SEARCH_USERS,
     }),
     fetchUsers() {
-      this.isLoading = false
+      this.isLoading = true
       this.FETCH_USERS().finally(() => {
         this.isLoading = false
       })
@@ -136,13 +138,21 @@ export default Vue.extend({
       this.planetInfo = null
     },
     onSearch: debounce(function(query: string) {
-      api.user.search(query).then((response: UserResponseDTO) => {
-        //@ts-ignore
-        this.suggestions = response.count > 0 ? response.results.map((user: UserDTO) => user.name) : []
-      })
+      //@ts-ignore
+      this.isSuggestionsLoading = true
+      api.user
+        .search(query)
+        .then((response: UserResponseDTO) => {
+          //@ts-ignore
+          this.suggestions = response.count > 0 ? response.results.map((user: UserDTO) => user.name) : []
+        })
+        .finally(() => {
+          //@ts-ignore
+          this.isSuggestionsLoading = false
+        })
     }, 300),
     onEnter(query: string) {
-      this.isLoading = false
+      this.isLoading = true
       this.SEARCH_USERS(query).then(() => {
         this.isLoading = false
       })

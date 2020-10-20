@@ -3,6 +3,9 @@
     <div class="icon">
       <unicon :name="icon" width="16" height="16"></unicon>
     </div>
+    <div class="loader-cont" v-if="loading">
+      <loader-alpha :width="20" :height="20" />
+    </div>
     <input
       :value="valueComp"
       @input="onInput"
@@ -48,6 +51,11 @@ export default Vue.extend({
       type: String,
       required: false,
       default: null,
+    },
+    loading: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   computed: {

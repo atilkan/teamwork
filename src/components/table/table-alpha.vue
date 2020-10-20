@@ -15,7 +15,16 @@
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody v-if="loading">
+        <tr>
+          <td :colspan="headersComp.length">
+            <div class="pa-32">
+              <loader-alpha :width="44" :height="44" />
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      <tbody v-else>
         <tr v-for="(row, i) in itemsComp" :key="i">
           <td v-for="(col, j) in headersComp" :key="j">
             <div class="cell">
@@ -66,6 +75,11 @@ export default Vue.extend({
       type: String,
       required: false,
       default: "asc" as SortDirection,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
+      required: false,
     },
   },
   data: () => ({
