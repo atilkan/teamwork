@@ -6,7 +6,7 @@
         <button class="modal-close-button" @click="closeModal">
           <unicon name="times" width="24" height="24" />
         </button>
-        <transition name="modal">
+        <transition name="fade-slow">
           <div v-if="loading" class="modal-loading">
             <loader-alpha />
           </div>

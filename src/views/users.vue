@@ -1,29 +1,35 @@
 <template>
   <div class="container mt-32">
-    <div class="flex left mb-32">
-      <div class="flex middle">
-        <input-alpha placeholder="Search by name" :clearable="true">
-          <template v-slot:prepend>
-            <unicon name="search" />
-          </template>
-        </input-alpha>
+    <div class="row mb-32">
+      <div class="sm-6">
+        <input-alpha
+          placeholder="Search by name"
+          icon="search"
+          v-model="searchQuery"
+          @input="onSearch"
+          @enter="onEnter"
+          :suggestions="suggestions"
+          id="suggestions"
+        />
       </div>
     </div>
-    <div>
-      <table-alpha :headers="headers" :items="USERS" :loading="isLoading" sort-by="name">
-        <template v-slot:item_created="{ row }">
-          {{ formatDate(row.created) }}
-        </template>
-        <template v-slot:item_edited="{ row }">
-          {{ formatDate(row.edited) }}
-          <span class="highlight">({{ formatDistance(row.created, row.edited) }})</span>
-        </template>
-        <template v-slot:item_homeworld="{ row }">
-          <button-alpha @click="onPlanetClick(row.homeworld)">
-            Planet Name?
-          </button-alpha>
-        </template>
-      </table-alpha>
+    <div class="row">
+      <div class="sm-12">
+        <table-alpha :headers="headers" :items="USERS" :loading="isLoading" sort-by="name">
+          <template v-slot:item_created="{ row }">
+            {{ formatDate(row.created) }}
+          </template>
+          <template v-slot:item_edited="{ row }">
+            {{ formatDate(row.edited) }}
+            <span class="highlight">({{ formatDistance(row.created, row.edited) }})</span>
+          </template>
+          <template v-slot:item_homeworld="{ row }">
+            <button-alpha @click="onPlanetClick(row.homeworld)">
+              Planet Name?
+            </button-alpha>
+          </template>
+        </table-alpha>
+      </div>
     </div>
 
     <modal-alpha v-model="isModalVisible" :loading.sync="isPlanetLoading" @close="onModalClose">
@@ -42,7 +48,7 @@
 import Vue from "vue"
 import api from "@/api/"
 import MT from "@/store/modules/users/mutation-types"
-import { toNumber } from "lodash-es"
+import { toNumber, debounce } from "lodash-es"
 import { mapActions, mapState } from "vuex"
 import { format, formatDistanceStrict } from "date-fns"
 import tableAlpha from "@comp/table/table-alpha.vue"
@@ -50,6 +56,8 @@ import inputAlpha from "@comp/input/input-alpha.vue"
 import modalAlpha from "@comp/modal/modal-alpha.vue"
 import buttonAlpha from "@comp/button/button-alpha.vue"
 import { PlanetDTO } from "@/ts/interfaces/planet"
+import { UserDTO } from "@/ts/interfaces/user"
+import { UserResponseDTO } from "@/ts/interfaces/responses"
 
 export default Vue.extend({
   name: "users",
@@ -64,6 +72,8 @@ export default Vue.extend({
     isModalVisible: false,
     planetInfo: null as PlanetDTO | null,
     isPlanetLoading: false,
+    searchQuery: "",
+    suggestions: null as string[] | null,
   }),
   computed: {
     // we use directly state because getters are expensive
@@ -82,23 +92,18 @@ export default Vue.extend({
       { name: "Edited", key: "edited", sortable: true },
       { name: "Planet", key: "homeworld", sortable: false },
     ]
-  },
-  mounted() {
     this.fetchUsers()
   },
   methods: {
     ...mapActions({
       FETCH_USERS: MT.FETCH_USERS,
+      SEARCH_USERS: MT.SEARCH_USERS,
     }),
     fetchUsers() {
       this.isLoading = false
-      this.FETCH_USERS()
-        .catch(() => {
-          // handle error
-        })
-        .finally(() => {
-          this.isLoading = false
-        })
+      this.FETCH_USERS().finally(() => {
+        this.isLoading = false
+      })
     },
     formatDate(date: Date) {
       return format(new Date(date), "dd LLL yy HH:mm")
@@ -129,6 +134,18 @@ export default Vue.extend({
     },
     onModalClose() {
       this.planetInfo = null
+    },
+    onSearch: debounce(function(query: string) {
+      api.user.search(query).then((response: UserResponseDTO) => {
+        //@ts-ignore
+        this.suggestions = response.count > 0 ? response.results.map((user: UserDTO) => user.name) : []
+      })
+    }, 300),
+    onEnter(query: string) {
+      this.isLoading = false
+      this.SEARCH_USERS(query).then(() => {
+        this.isLoading = false
+      })
     },
   },
 })

@@ -2,6 +2,7 @@
 
 export default {
   FETCH_USERS: "users/FETCH_USERS",
+  SEARCH_USERS: "users/SEARCH_USERS",
   SET_USERS: "users/SET_USERS",
   SET_COUNT: "users/SET_COUNT",
   SET_PREVIOUS: "users/SET_PREVIOUS",

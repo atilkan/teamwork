@@ -25,6 +25,15 @@
             </div>
           </td>
         </tr>
+        <tr v-if="!itemsComp || itemsComp.length === 0">
+          <td :colspan="headersComp.length">
+            <div class="pa-32">
+              <h3>
+                No Data
+              </h3>
+            </div>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
