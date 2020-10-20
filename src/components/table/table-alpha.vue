@@ -19,11 +19,8 @@
         <tr v-for="(row, i) in itemsComp" :key="i">
           <td v-for="(col, j) in headersComp" :key="j">
             <div class="cell">
-              <!-- <template v-if="$slots"> </template> -->
               <slot :name="`item_${headersComp[j].key}`" :row="row">
-                <template>
-                  {{ row[headersComp[j].key] }}
-                </template>
+                {{ row[headersComp[j].key] }}
               </slot>
             </div>
           </td>
