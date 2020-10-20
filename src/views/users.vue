@@ -101,7 +101,7 @@ export default Vue.extend({
         })
     },
     formatDate(date: Date) {
-      return format(new Date(date), "dd.MM.yyyy HH:mm")
+      return format(new Date(date), "dd LLL yy HH:mm")
     },
     formatDistance(start: Date, end: Date) {
       return formatDistanceStrict(new Date(start), new Date(end)) + " later"
