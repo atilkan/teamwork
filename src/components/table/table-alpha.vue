@@ -2,29 +2,22 @@
   <div class="table-alpha">
     <table>
       <thead>
-        <tr>
+        <tr v-if="headersComp">
           <th v-for="field in headersComp" :key="field.key">
             <div class="cell">
               <button class="header-cell-button" @click="onSort(field.key)" :disabled="!field.sortable">
                 {{ field.name }}
-                <template v-if="field.sortable && sortKey === field.key && sortDirLocal !== 'none'">
-                  <unicon width="16" height="16" :name="sortDirLocal === 'asc' ? 'arrow-up' : 'arrow-down'" />
+                <template v-if="field.sortable">
+                  <unicon width="16" height="16" v-if="field.sortDir === 'asc'" name="arrow-up" fill="black" />
+                  <unicon width="16" height="16" v-if="field.sortDir === 'desc'" name="arrow-down" fill="black" />
+                  <unicon width="16" height="16" v-if="field.sortDir === 'none'" name="arrow-up" fill="#d3d3d3" />
                 </template>
               </button>
             </div>
           </th>
         </tr>
       </thead>
-      <tbody v-if="loading">
-        <tr>
-          <td :colspan="headersComp.length">
-            <div class="pa-32">
-              <loader-alpha :width="44" :height="44" />
-            </div>
-          </td>
-        </tr>
-      </tbody>
-      <tbody v-else>
+      <tbody>
         <tr v-for="(row, i) in itemsComp" :key="i">
           <td v-for="(col, j) in headersComp" :key="j">
             <div class="cell">
@@ -34,7 +27,7 @@
             </div>
           </td>
         </tr>
-        <tr v-if="!itemsComp || itemsComp.length === 0">
+        <tr v-if="itemsComp && !itemsComp.length && !loading">
           <td :colspan="headersComp.length">
             <div class="pa-32">
               <h3>
@@ -45,10 +38,16 @@
         </tr>
       </tbody>
     </table>
+    <transition name="fade">
+      <div class="pa-32 loading-cont" v-if="loading">
+        <loader-alpha :width="44" :height="44" />
+      </div>
+    </transition>
   </div>
 </template>
 
 <script lang="ts">
+//@ts-nocheck
 import Vue from "vue"
 import { orderBy } from "lodash-es"
 import { SortDirection } from "@/ts/enum/sort-direction"
@@ -74,7 +73,7 @@ export default Vue.extend({
     sortDir: {
       type: String,
       required: false,
-      default: "asc" as SortDirection,
+      default: SortDirection.asc,
     },
     loading: {
       type: Boolean,
@@ -82,48 +81,55 @@ export default Vue.extend({
       required: false,
     },
   },
-  data: () => ({
-    sortKey: null as null | string,
-    sortDirLocal: "asc" as SortDirection,
-    sortClickCount: 0,
-  }),
+  data() {
+    return {
+      sortKey: this.sortBy,
+      headersComp: this.mapHeaders(),
+    }
+  },
   computed: {
-    headersComp() {
-      return this.headers.map((item: any) => ({
-        name: item.name,
-        key: item.key,
-        sortable: item.sortable || false,
-      }))
-    },
     itemsComp() {
-      if (this.sortKey && this.sortDirLocal !== SortDirection.none) {
-        return orderBy(this.items, this.sortKey, this.sortDirLocal)
+      const currentSortHeader = this.headersComp.find((item: any) => item.key === this.sortKey)
+      console.log("currentSortHeader.sortDir", this.sortKey, currentSortHeader.sortDir)
+
+      if (this.sortKey) {
+        return orderBy(this.items, this.sortKey, currentSortHeader.sortDir)
       }
       return this.items
     },
   },
-  mounted() {
-    this.sortKey = this.sortBy
-    this.sortDirLocal = this.sortDir as SortDirection
-  },
   methods: {
+    mapHeaders() {
+      return this.headers.map((item: any) => ({
+        name: item.name,
+        key: item.key,
+        sortable: Boolean(item.sortable),
+        sortDir: this.sortKey === item.key ? this.sortDir : SortDirection.none,
+      }))
+    },
     onSort(key: string) {
+      const currentSortHeader = this.headersComp.find((item: any) => item.key === this.sortKey)
+      const newIndex = this.headersComp.findIndex((item: any) => item.key === key)
+      const oldIndex = this.headersComp.findIndex((item: any) => item.key === this.sortKey)
+
       if (this.sortKey === key) {
-        switch (this.sortDirLocal) {
+        switch (currentSortHeader.sortDir) {
           case SortDirection.asc:
-            this.sortDirLocal = SortDirection.desc
+            this.headersComp[newIndex].sortDir = SortDirection.desc
             break
           case SortDirection.desc:
-            this.sortDirLocal = SortDirection.none
+            this.headersComp[newIndex].sortDir = SortDirection.none
             break
           case SortDirection.none:
-            this.sortDirLocal = SortDirection.asc
+            this.headersComp[newIndex].sortDir = SortDirection.asc
             break
         }
       } else {
-        this.sortKey = key
-        this.sortDirLocal = SortDirection.asc
+        this.headersComp[oldIndex].sortDir = SortDirection.none
+        this.headersComp[newIndex].sortDir = SortDirection.asc
       }
+      this.sortKey = key
+      this.$emit("sort", key) // might need it
     },
   },
 })

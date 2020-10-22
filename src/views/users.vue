@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-32">
     <div class="row mb-32">
-      <div class="sm-6">
+      <div class="sm-12 md-4">
         <input-alpha
           placeholder="Search by name"
           icon="search"
