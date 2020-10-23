@@ -46,6 +46,7 @@
 </template>
 
 <script lang="ts">
+//@ts-nocheck
 import Vue from "vue"
 import api from "@/api/"
 import MT from "@/store/modules/users/mutation-types"
@@ -86,7 +87,7 @@ export default Vue.extend({
   },
   created() {
     // non reactive data initilization
-    ;(this as any).headers = [
+    this.headers = [
       { name: "Name", key: "name", sortable: true },
       { name: "Height", key: "height", sortable: true },
       { name: "Mass", key: "mass", sortable: true },
@@ -138,22 +139,19 @@ export default Vue.extend({
       this.planetInfo = null
     },
     onSearch: debounce(function(query: string) {
-      //@ts-ignore
       this.isSuggestionsLoading = true
       api.user
         .search(query)
         .then((response: UserResponseDTO) => {
-          //@ts-ignore
           this.suggestions = response.count > 0 ? response.results.map((user: UserDTO) => user.name) : []
         })
         .finally(() => {
-          //@ts-ignore
           this.isSuggestionsLoading = false
         })
-    }, 300),
+    }, 200),
     onEnter(query: string) {
       this.isLoading = true
-      this.SEARCH_USERS(query).then(() => {
+      this.SEARCH_USERS(query).finally(() => {
         this.isLoading = false
       })
     },

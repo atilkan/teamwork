@@ -19,7 +19,7 @@ const users: Module<State, State> = {
       try {
         const response: UserResponseDTO = await api.user.getUsers()
         // map only required properties // good for memory and reactive watcher
-        response.results.map((item: UserDTO) => ({
+        const users = response.results.map((item: UserDTO) => ({
           name: item.name,
           height: item.height,
           mass: item.mass,
@@ -27,7 +27,7 @@ const users: Module<State, State> = {
           edited: item.edited,
           homeworld: item.homeworld,
         }))
-        commit(MT.SET_USERS, response.results)
+        commit(MT.SET_USERS, users)
         commit(MT.SET_COUNT, response.count)
         commit(MT.SET_PREVIOUS, response.previous)
         commit(MT.SET_NEXT, response.next)
@@ -41,7 +41,7 @@ const users: Module<State, State> = {
       try {
         const response: UserResponseDTO = await api.user.search(query)
         // map only required properties // good for memory and reactive watcher
-        response.results.map((item: UserDTO) => ({
+        const users = response.results.map((item: UserDTO) => ({
           name: item.name,
           height: item.height,
           mass: item.mass,
@@ -49,7 +49,7 @@ const users: Module<State, State> = {
           edited: item.edited,
           homeworld: item.homeworld,
         }))
-        commit(MT.SET_USERS, response.results)
+        commit(MT.SET_USERS, users)
         commit(MT.SET_COUNT, response.count)
         commit(MT.SET_PREVIOUS, response.previous)
         commit(MT.SET_NEXT, response.next)
@@ -67,10 +67,10 @@ const users: Module<State, State> = {
     [MT.SET_COUNT](state: State, count: number) {
       state.count = count
     },
-    [MT.SET_NEXT](state: State, next: string) {
+    [MT.SET_NEXT](state: State, next: string | null) {
       state.next = next
     },
-    [MT.SET_PREVIOUS](state: State, previous: string) {
+    [MT.SET_PREVIOUS](state: State, previous: string | null) {
       state.previous = previous
     },
   },
