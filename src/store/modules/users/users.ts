@@ -1,4 +1,5 @@
 import { Module } from "vuex"
+import { toNumber } from "lodash-es"
 import api from "@/api"
 import MT from "./mutation-types"
 import { UserDTO } from "@/ts/interfaces/user"
@@ -21,8 +22,8 @@ const users: Module<State, State> = {
         // map only required properties // good for memory and reactive watcher
         const users = response.results.map((item: UserDTO) => ({
           name: item.name,
-          height: item.height,
-          mass: item.mass,
+          height: toNumber(item.height),
+          mass: toNumber(item.mass),
           created: item.created,
           edited: item.edited,
           homeworld: item.homeworld,

@@ -117,6 +117,7 @@ export default Vue.extend({
     onPlanetClick(url: string) {
       this.isModalVisible = true
       this.isPlanetLoading = true
+
       api.planet
         .get(url)
         .then((response: PlanetDTO) => {
