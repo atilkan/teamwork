@@ -17,14 +17,14 @@
     <div class="row">
       <div class="sm-12">
         <table-alpha :headers="headers" :items="USERS" :loading="isLoading" sort-by="name">
-          <template v-slot:item_created="{ row }">
+          <template v-slot:column_created="{ row }">
             {{ formatDate(row.created) }}
           </template>
-          <template v-slot:item_edited="{ row }">
+          <template v-slot:column_edited="{ row }">
             {{ formatDate(row.edited) }}
             <span class="highlight">({{ formatDistance(row.created, row.edited) }})</span>
           </template>
-          <template v-slot:item_homeworld="{ row }">
+          <template v-slot:column_homeworld="{ row }">
             <button-alpha @click="onPlanetClick(row.homeworld)">
               Planet Name?
             </button-alpha>

@@ -21,7 +21,7 @@
         <tr v-for="(row, i) in itemsComp" :key="i">
           <td v-for="(col, j) in headersComp" :key="j">
             <div class="cell">
-              <slot :name="`item_${headersComp[j].key}`" :row="row">
+              <slot :name="`column_${headersComp[j].key}`" :row="row">
                 {{ row[headersComp[j].key] }}
               </slot>
             </div>
