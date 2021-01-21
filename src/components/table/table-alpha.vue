@@ -1,7 +1,7 @@
 <template>
   <div class="table-alpha">
     <table>
-      <thead :show-header="showHeader">
+      <thead v-if="showHeaders">
         <tr v-if="headersComp">
           <th v-for="field in headersComp" :key="field.key">
             <div class="cell">
@@ -17,27 +17,29 @@
           </th>
         </tr>
       </thead>
-      <tbody>
-        <slot name="row" v-for="(row, i) in itemsComp" :row="row">
-          <table-row :key="i">
-            <table-col v-for="(col, j) in headersComp" :key="j">
-              <slot :name="`cell_${headersComp[j].key}`" :row="row">
-                {{ row[headersComp[j].key] }}
-              </slot>
-            </table-col>
-          </table-row>
-        </slot>
+      <slot>
+        <tbody>
+          <slot name="row" v-for="(row, i) in itemsComp" :row="row">
+            <table-row :key="i">
+              <table-col v-for="(col, j) in headersComp" :key="j">
+                <slot :name="`cell_${headersComp[j].key}`" :row="row">
+                  {{ row[headersComp[j].key] }}
+                </slot>
+              </table-col>
+            </table-row>
+          </slot>
 
-        <tr v-if="itemsComp && !itemsComp.length && !loading">
-          <td :colspan="headersComp.length">
-            <div class="pa-32">
-              <h3>
-                No Data
-              </h3>
-            </div>
-          </td>
-        </tr>
-      </tbody>
+          <tr v-if="itemsComp && !itemsComp.length && !loading">
+            <td :colspan="headersComp.length">
+              <div class="pa-32">
+                <h3>
+                  No Data
+                </h3>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </slot>
     </table>
     <transition name="fade">
       <div class="pa-32 loading-cont" v-if="loading">
@@ -64,7 +66,7 @@ export default Vue.extend({
       required: false,
       default: null,
     },
-    showHeader: {
+    showHeaders: {
       type: Boolean,
       required: false,
       default: true,

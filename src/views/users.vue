@@ -16,7 +16,7 @@
     </div>
     <div class="row">
       <div class="sm-12">
-        <table-alpha :headers="headers" :items="USERS" :loading="isLoading" sort-by="name">
+        <!-- <table-alpha :headers="headers" :items="USERS" :loading="isLoading" sort-by="name">
           <template v-slot:cell_created="{ row }">
             {{ formatDate(row.created) }}
           </template>
@@ -29,37 +29,73 @@
               Planet Name?
             </button-alpha>
           </template>
-        </table-alpha>
+        </table-alpha> -->
 
         <div class="mt-32"></div>
 
-        <table-alpha :headers="headers" :items="USERS" :loading="isLoading" sort-by="name" :show-header="false">
-          <template v-slot:row="{ row }">
-            <table-row>
-              <table-col :key="j" v-for="(header, j) in headers">
+        <table-alpha :headers="headers" :items="USERS_COPY" :loading="isLoading" sort-by="name">
+          <!-- <template v-slot:row="{ row }"> -->
+          <draggable
+            tag="tbody"
+            :list="USERS_COPY"
+            group="users"
+            @change="log"
+            @start="drag = true"
+            @end="drag = false"
+          >
+            <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
+            <table-row v-for="(row, i) in USERS_COPY" :key="row.edited">
+              <table-col v-for="(header, j) in headers" :key="j">
                 <template v-if="header.key === 'homeworld'">
-                  <button-alpha @click="onPlanetClick(row.homeworld)">
-                    Planet Name?
-                  </button-alpha>
+                  <button-alpha @click="onPlanetClick(row[i].homeworld)"> Planet Name? </button-alpha>
                 </template>
                 <div v-else>
                   {{ row[header.key] }}
                 </div>
               </table-col>
             </table-row>
-          </template>
+            <!-- </transition-group> -->
+          </draggable>
+          <!-- </template> -->
+        </table-alpha>
+
+        <div class="mt-32"></div>
+
+        <table-alpha :show-headers="false" :headers="headers" :loading="isLoading" sort-by="name">
+          <draggable
+            tag="tbody"
+            :list="USERS_COPY2"
+            group="users"
+            @change="log"
+            @start="drag = true"
+            @end="drag = false"
+          >
+            <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
+            <table-row v-for="(row, i) in USERS_COPY" :key="row.created">
+              <table-col v-for="(header, j) in headers" :key="j">
+                <template v-if="header.key === 'homeworld'">
+                  <button-alpha @click="onPlanetClick(row[i].homeworld)"> Planet Name? </button-alpha>
+                </template>
+                <div v-else>
+                  {{ row[header.key] }}
+                </div>
+              </table-col>
+            </table-row>
+            <!-- </transition-group> -->
+          </draggable>
+          <!-- </template> -->
         </table-alpha>
       </div>
     </div>
 
     <modal-alpha v-model="isModalVisible" :loading="isPlanetLoading" @close="onModalClose">
-      <div v-if="planetInfo" class="text-left">
+      <!-- <div v-if="planetInfo" class="text-left">
         <h3 class="bold mb-4">Planet Information</h3>
         <p><span class="bold">Name:</span> {{ planetInfo.name }}</p>
         <p><span class="bold">Diameter:</span> {{ planetInfo.diameter }}</p>
         <p><span class="bold">Climate:</span> {{ planetInfo.climate }}</p>
         <p><span class="bold">Population:</span> {{ planetInfo.population }}</p>
-      </div>
+      </div> -->
     </modal-alpha>
   </div>
 </template>
@@ -69,9 +105,10 @@
 import Vue from "vue"
 import api from "@/api/"
 import MT from "@/store/modules/users/mutation-types"
-import { toNumber, debounce } from "lodash-es"
+import { toNumber, debounce, cloneDeep } from "lodash-es"
 import { mapActions, mapState } from "vuex"
 import { format, formatDistanceStrict } from "date-fns"
+import draggable from "vuedraggable"
 import tableAlpha from "@comp/table/table-alpha.vue"
 import inputAlpha from "@comp/input/input-alpha.vue"
 import modalAlpha from "@comp/modal/modal-alpha.vue"
@@ -91,6 +128,7 @@ export default Vue.extend({
     buttonAlpha,
     tableCol,
     tableRow,
+    draggable,
   },
   data: () => ({
     isLoading: false,
@@ -100,6 +138,9 @@ export default Vue.extend({
     searchQuery: "",
     isSuggestionsLoading: false,
     suggestions: null as string[] | null,
+    USERS_COPY: null,
+    USERS_COPY2: null,
+    drag: false,
   }),
   computed: {
     // we use directly state because getters are expensive
@@ -125,11 +166,19 @@ export default Vue.extend({
       FETCH_USERS: MT.FETCH_USERS,
       SEARCH_USERS: MT.SEARCH_USERS,
     }),
+    log(evt) {
+      console.log(evt)
+    },
     fetchUsers() {
       this.isLoading = true
-      this.FETCH_USERS().finally(() => {
-        this.isLoading = false
-      })
+      this.FETCH_USERS()
+        .then(() => {
+          this.USERS_COPY = cloneDeep(this.USERS)
+          this.USERS_COPY2 = cloneDeep(this.USERS)
+        })
+        .finally(() => {
+          this.isLoading = false
+        })
     },
     formatDate(date: Date) {
       return format(new Date(date), "dd LLL yy HH:mm")
@@ -162,7 +211,7 @@ export default Vue.extend({
     onModalClose() {
       this.planetInfo = null
     },
-    onSearch: debounce(function(query: string) {
+    onSearch: debounce(function (query: string) {
       this.isSuggestionsLoading = true
       api.user
         .search(query)
