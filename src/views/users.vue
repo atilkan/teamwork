@@ -17,17 +17,36 @@
     <div class="row">
       <div class="sm-12">
         <table-alpha :headers="headers" :items="USERS" :loading="isLoading" sort-by="name">
-          <template v-slot:column_created="{ row }">
+          <template v-slot:cell_created="{ row }">
             {{ formatDate(row.created) }}
           </template>
-          <template v-slot:column_edited="{ row }">
+          <template v-slot:cell_edited="{ row }">
             {{ formatDate(row.edited) }}
             <span class="highlight">({{ formatDistance(row.created, row.edited) }})</span>
           </template>
-          <template v-slot:column_homeworld="{ row }">
+          <template v-slot:cell_homeworld="{ row }">
             <button-alpha @click="onPlanetClick(row.homeworld)">
               Planet Name?
             </button-alpha>
+          </template>
+        </table-alpha>
+
+        <div class="mt-32"></div>
+
+        <table-alpha :headers="headers" :items="USERS" :loading="isLoading" sort-by="name" :show-header="false">
+          <template v-slot:row="{ row }">
+            <table-row>
+              <table-col :key="j" v-for="(header, j) in headers">
+                <template v-if="header.key === 'homeworld'">
+                  <button-alpha @click="onPlanetClick(row.homeworld)">
+                    Planet Name?
+                  </button-alpha>
+                </template>
+                <div v-else>
+                  {{ row[header.key] }}
+                </div>
+              </table-col>
+            </table-row>
           </template>
         </table-alpha>
       </div>
@@ -60,6 +79,8 @@ import buttonAlpha from "@comp/button/button-alpha.vue"
 import { PlanetDTO } from "@/ts/interfaces/planet"
 import { UserDTO } from "@/ts/interfaces/user"
 import { UserResponseDTO } from "@/ts/interfaces/responses"
+import tableCol from "@/components/table/table-col"
+import tableRow from "@/components/table/table-row"
 
 export default Vue.extend({
   name: "users",
@@ -68,6 +89,8 @@ export default Vue.extend({
     inputAlpha,
     modalAlpha,
     buttonAlpha,
+    tableCol,
+    tableRow,
   },
   data: () => ({
     isLoading: false,

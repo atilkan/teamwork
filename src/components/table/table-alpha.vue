@@ -1,7 +1,7 @@
 <template>
   <div class="table-alpha">
     <table>
-      <thead>
+      <thead :show-header="showHeader">
         <tr v-if="headersComp">
           <th v-for="field in headersComp" :key="field.key">
             <div class="cell">
@@ -18,15 +18,16 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(row, i) in itemsComp" :key="i">
-          <td v-for="(col, j) in headersComp" :key="j">
-            <div class="cell">
-              <slot :name="`column_${headersComp[j].key}`" :row="row">
+        <slot name="row" v-for="(row, i) in itemsComp" :row="row">
+          <table-row :key="i">
+            <table-col v-for="(col, j) in headersComp" :key="j">
+              <slot :name="`cell_${headersComp[j].key}`" :row="row">
                 {{ row[headersComp[j].key] }}
               </slot>
-            </div>
-          </td>
-        </tr>
+            </table-col>
+          </table-row>
+        </slot>
+
         <tr v-if="itemsComp && !itemsComp.length && !loading">
           <td :colspan="headersComp.length">
             <div class="pa-32">
@@ -51,14 +52,22 @@
 import Vue from "vue"
 import { orderBy } from "lodash-es"
 import { SortDirection } from "@/ts/enum/sort-direction"
+import tableCol from "./table-col"
+import tableRow from "./table-row"
 
 export default Vue.extend({
   name: "table-alpha",
+  components: { tableCol, tableRow },
   props: {
     headers: {
       type: Array,
       required: false,
       default: null,
+    },
+    showHeader: {
+      type: Boolean,
+      required: false,
+      default: true,
     },
     items: {
       type: Array,
@@ -135,4 +144,4 @@ export default Vue.extend({
 })
 </script>
 
-<style lang="sass" scoped src="./table-alpha.sass"></style>
+<style lang="sass" src="./table-alpha.sass"></style>
