@@ -32,6 +32,7 @@ try{
 ### **Adding new service**
 
 Add a file that named as your service(products) inside **@/api/services/** folder.
+They will be automatically registered to api namespace.
 
 ### **Example of a service file**
 
