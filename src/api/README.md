@@ -1,6 +1,6 @@
 # API module
 
-This module is for intended to make API consumption easier from anywhere. It uses webpack requireModule to read contents of folder and expose it as **api**.
+This module is intended to make API consumption easier from anywhere. It uses webpack requireModule to read contents of folder and expose it as **api**. And it returns the axios promise result.
 
 ### **import**
 
