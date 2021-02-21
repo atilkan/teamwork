@@ -17,29 +17,23 @@
           </th>
         </tr>
       </thead>
-      <slot>
-        <tbody>
-          <slot name="row" v-for="(row, i) in itemsComp" :row="row">
-            <table-row :key="i">
-              <table-col v-for="(col, j) in headersComp" :key="j">
-                <slot :name="`cell_${headersComp[j].key}`" :row="row">
-                  {{ row[headersComp[j].key] }}
-                </slot>
-              </table-col>
-            </table-row>
-          </slot>
+      <tbody>
+        <table-row v-for="(row, i) in itemsComp" :row="row" :key="i">
+          <table-col v-for="(col, j) in headersComp" :key="j">
+            <slot :name="`col-${headersComp[j].key}`" :row="row">
+              {{ row[headersComp[j].key] }}
+            </slot>
+          </table-col>
+        </table-row>
 
-          <tr v-if="itemsComp && !itemsComp.length && !loading">
-            <td :colspan="headersComp.length">
-              <div class="pa-32">
-                <h3>
-                  No Data
-                </h3>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </slot>
+        <tr v-if="itemsComp && !itemsComp.length && !loading">
+          <td :colspan="headersComp.length">
+            <div class="pa-32">
+              <h3>No Data</h3>
+            </div>
+          </td>
+        </tr>
+      </tbody>
     </table>
     <transition name="fade">
       <div class="pa-32 loading-cont" v-if="loading">
@@ -53,7 +47,7 @@
 //@ts-nocheck
 import Vue from "vue"
 import { orderBy } from "lodash-es"
-import { SortDirection } from "@/ts/enum/sort-direction"
+import { SortDir } from "@/ts/enum/sort-dir"
 import tableCol from "./table-col"
 import tableRow from "./table-row"
 
@@ -84,7 +78,7 @@ export default Vue.extend({
     sortDir: {
       type: String,
       required: false,
-      default: SortDirection.asc,
+      default: SortDir.asc,
     },
     loading: {
       type: Boolean,
@@ -101,8 +95,7 @@ export default Vue.extend({
   computed: {
     itemsComp() {
       const currentSortHeader = this.headersComp.find((item: any) => item.key === this.sortKey)
-      console.log("currentSortHeader.sortDir", this.sortKey, currentSortHeader.sortDir)
-
+      // console.log("currentSortHeader.sortDir", this.sortKey, currentSortHeader.sortDir)
       if (this.sortKey) {
         return orderBy(this.items, this.sortKey, currentSortHeader.sortDir)
       }
@@ -115,7 +108,7 @@ export default Vue.extend({
         name: item.name,
         key: item.key,
         sortable: Boolean(item.sortable),
-        sortDir: this.sortKey === item.key ? this.sortDir : SortDirection.none,
+        sortDir: this.sortKey === item.key ? this.sortDir : SortDir.none,
       }))
     },
     onSort(key: string) {
@@ -123,21 +116,25 @@ export default Vue.extend({
       const newIndex = this.headersComp.findIndex((item: any) => item.key === key)
       const oldIndex = this.headersComp.findIndex((item: any) => item.key === this.sortKey)
 
+      console.log("this.sortKey", this.sortKey)
+      console.log("key", key)
+
       if (this.sortKey === key) {
         switch (currentSortHeader.sortDir) {
-          case SortDirection.asc:
-            this.headersComp[newIndex].sortDir = SortDirection.desc
+          case SortDir.asc:
+            this.headersComp[newIndex].sortDir = SortDir.desc
             break
-          case SortDirection.desc:
-            this.headersComp[newIndex].sortDir = SortDirection.none
+          case SortDir.desc:
+            this.headersComp[newIndex].sortDir = SortDir.none
             break
-          case SortDirection.none:
-            this.headersComp[newIndex].sortDir = SortDirection.asc
-            break
+          case SortDir.none:
+            this.headersComp[newIndex].sortDir = SortDir.asc
+            this.sortKey = this.sortBy
+            return
         }
       } else {
-        this.headersComp[oldIndex].sortDir = SortDirection.none
-        this.headersComp[newIndex].sortDir = SortDirection.asc
+        this.headersComp[oldIndex].sortDir = SortDir.none
+        this.headersComp[newIndex].sortDir = SortDir.asc
       }
       this.sortKey = key
       this.$emit("sort", key) // might need it

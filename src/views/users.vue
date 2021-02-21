@@ -16,86 +16,76 @@
     </div>
     <div class="row">
       <div class="sm-12">
-        <!-- <table-alpha :headers="headers" :items="USERS" :loading="isLoading" sort-by="name">
-          <template v-slot:cell_created="{ row }">
+        <table-alpha :headers="headers" :items="USERS" :loading="isLoading" sort-by="name">
+          <template v-slot:col-created="{ row }">
             {{ formatDate(row.created) }}
           </template>
-          <template v-slot:cell_edited="{ row }">
+          <template v-slot:col-edited="{ row }">
             {{ formatDate(row.edited) }}
             <span class="highlight">({{ formatDistance(row.created, row.edited) }})</span>
           </template>
-          <template v-slot:cell_homeworld="{ row }">
+          <template v-slot:col-homeworld="{ row }">
             <button-alpha @click="onPlanetClick(row.homeworld)">
               Planet Name?
             </button-alpha>
           </template>
-        </table-alpha> -->
+        </table-alpha>
 
         <div class="mt-32"></div>
 
-        <table-alpha :headers="headers" :items="USERS_COPY" :loading="isLoading" sort-by="name">
-          <!-- <template v-slot:row="{ row }"> -->
+        <div class="mt-32"></div>
+
+        <!-- <table-alpha :show-headers="false" :headers="headers" :items="USERS_COPY" :loading="isLoading" sort-by="name">
           <draggable
-            tag="tbody"
             :list="USERS_COPY"
             group="users"
             @change="log"
             @start="drag = true"
             @end="drag = false"
+            ghostClass="ghost"
           >
-            <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
-            <table-row v-for="(row, i) in USERS_COPY" :key="row.edited">
-              <table-col v-for="(header, j) in headers" :key="j">
-                <template v-if="header.key === 'homeworld'">
-                  <button-alpha @click="onPlanetClick(row[i].homeworld)"> Planet Name? </button-alpha>
-                </template>
-                <div v-else>
-                  {{ row[header.key] }}
-                </div>
-              </table-col>
-            </table-row>
-            <!-- </transition-group> -->
+            <transition-group type="transition" :name="!drag ? 'flip-list' : null" tag="tbody">
+              <table-row v-for="row in USERS_COPY" :key="row.key">
+                <table-col v-for="(header, j) in headers" :key="j">
+                  <template v-if="header.key === 'homeworld'">
+                    <button-alpha @click="onPlanetClick(row.homeworld)"> Planet Name? </button-alpha>
+                  </template>
+                  <div v-else>
+                    {{ row[header.key] }}
+                  </div>
+                </table-col>
+              </table-row>
+            </transition-group>
           </draggable>
-          <!-- </template> -->
-        </table-alpha>
+        </table-alpha> -->
 
         <div class="mt-32"></div>
 
-        <table-alpha :show-headers="false" :headers="headers" :loading="isLoading" sort-by="name">
-          <draggable
-            tag="tbody"
-            :list="USERS_COPY2"
-            group="users"
-            @change="log"
-            @start="drag = true"
-            @end="drag = false"
-          >
-            <!-- <transition-group type="transition" :name="!drag ? 'flip-list' : null"> -->
-            <table-row v-for="(row, i) in USERS_COPY" :key="row.created">
-              <table-col v-for="(header, j) in headers" :key="j">
-                <template v-if="header.key === 'homeworld'">
-                  <button-alpha @click="onPlanetClick(row[i].homeworld)"> Planet Name? </button-alpha>
-                </template>
-                <div v-else>
-                  {{ row[header.key] }}
-                </div>
-              </table-col>
-            </table-row>
-            <!-- </transition-group> -->
-          </draggable>
-          <!-- </template> -->
+        <table-alpha :headers="headers" :items="USERS_COPY2" :loading="isLoading" sort-by="name">
+          <table-row v-for="row in USERS_COPY2" :key="row.key">
+            <table-col v-for="(header, j) in headers" :key="j">
+              <template v-if="header.key === 'homeworld'">
+                <button-alpha @click="onPlanetClick(row.homeworld)"> Planet Name? </button-alpha>
+              </template>
+              <div v-else>
+                {{ row[header.key] }}
+              </div>
+            </table-col>
+          </table-row>
         </table-alpha>
       </div>
     </div>
 
+    <div class="mt-32"></div>
+
     <modal-alpha v-model="isModalVisible" :loading="isPlanetLoading" @close="onModalClose">
-      <!-- <div v-if="planetInfo" class="text-left">
+      <div v-if="planetInfo" class="text-left">
         <h3 class="bold mb-4">Planet Information</h3>
         <p><span class="bold">Name:</span> {{ planetInfo.name }}</p>
         <p><span class="bold">Diameter:</span> {{ planetInfo.diameter }}</p>
         <p><span class="bold">Climate:</span> {{ planetInfo.climate }}</p>
         <p><span class="bold">Population:</span> {{ planetInfo.population }}</p>
-      </div> -->
+      </div>
     </modal-alpha>
   </div>
 </template>
@@ -108,7 +98,7 @@ import MT from "@/store/modules/users/mutation-types"
 import { toNumber, debounce, cloneDeep } from "lodash-es"
 import { mapActions, mapState } from "vuex"
 import { format, formatDistanceStrict } from "date-fns"
-import draggable from "vuedraggable"
+// import draggable from "vuedraggable"
 import tableAlpha from "@comp/table/table-alpha.vue"
 import inputAlpha from "@comp/input/input-alpha.vue"
 import modalAlpha from "@comp/modal/modal-alpha.vue"
@@ -118,6 +108,7 @@ import { UserDTO } from "@/ts/interfaces/user"
 import { UserResponseDTO } from "@/ts/interfaces/responses"
 import tableCol from "@/components/table/table-col"
 import tableRow from "@/components/table/table-row"
+import KeyGenerator from "@/utils/key-generator"
 
 export default Vue.extend({
   name: "users",
@@ -128,7 +119,7 @@ export default Vue.extend({
     buttonAlpha,
     tableCol,
     tableRow,
-    draggable,
+    // draggable,
   },
   data: () => ({
     isLoading: false,
@@ -141,6 +132,14 @@ export default Vue.extend({
     USERS_COPY: null,
     USERS_COPY2: null,
     drag: false,
+    headers: [
+      { name: "Name", key: "name", sortable: true },
+      { name: "Height", key: "height", sortable: true },
+      { name: "Mass", key: "mass", sortable: true },
+      { name: "Created", key: "created", sortable: true },
+      { name: "Edited", key: "edited", sortable: true },
+      { name: "Planet", key: "homeworld", sortable: false },
+    ],
   }),
   computed: {
     // we use directly state because getters are expensive
@@ -151,14 +150,6 @@ export default Vue.extend({
   },
   created() {
     // non reactive data initilization
-    this.headers = [
-      { name: "Name", key: "name", sortable: true },
-      { name: "Height", key: "height", sortable: true },
-      { name: "Mass", key: "mass", sortable: true },
-      { name: "Created", key: "created", sortable: true },
-      { name: "Edited", key: "edited", sortable: true },
-      { name: "Planet", key: "homeworld", sortable: false },
-    ]
     this.fetchUsers()
   },
   methods: {
@@ -173,8 +164,8 @@ export default Vue.extend({
       this.isLoading = true
       this.FETCH_USERS()
         .then(() => {
-          this.USERS_COPY = cloneDeep(this.USERS)
-          this.USERS_COPY2 = cloneDeep(this.USERS)
+          this.USERS_COPY = cloneDeep(this.USERS.map(item => ({ ...item, key: KeyGenerator.generate() })))
+          this.USERS_COPY2 = cloneDeep(this.USERS.map(item => ({ ...item, key: KeyGenerator.generate() })))
         })
         .finally(() => {
           this.isLoading = false
@@ -211,7 +202,7 @@ export default Vue.extend({
     onModalClose() {
       this.planetInfo = null
     },
-    onSearch: debounce(function (query: string) {
+    onSearch: debounce(function(query: string) {
       this.isSuggestionsLoading = true
       api.user
         .search(query)
@@ -236,4 +227,13 @@ export default Vue.extend({
 @import "@/styles/base/colors.sass"
 .highlight
   color: $blue
+
+.flip-list-move
+  transition: transform 0.5s
+
+.no-move
+  transition: transform 0s
+.ghost
+  opacity: 0.5
+  background: blue
 </style>
