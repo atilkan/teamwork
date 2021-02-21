@@ -1,6 +1,6 @@
 # API module
 
-This module is for intended to make API consumption easier from anywhere. It uses webpack requireModule to read contents of folder and expose it as **api**.
+This module is intended to make API consumption easier from anywhere. It uses webpack requireModule to read contents of folder and expose it as **api**. And it returns the axios promise result.
 
 ### **import**
 
@@ -32,6 +32,7 @@ try{
 ### **Adding new service**
 
 Add a file that named as your service(products) inside **@/api/services/** folder.
+They will be automatically registered to api namespace.
 
 ### **Example of a service file**
 
